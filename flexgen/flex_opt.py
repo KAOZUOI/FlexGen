@@ -1185,7 +1185,7 @@ def run_flexgen(args):
     if args.model == "facebook/galactica-30b":
         tokenizer = AutoTokenizer.from_pretrained("facebook/galactica-30b", padding_side="left")
     else:
-        tokenizer = AutoTokenizer.from_pretrained("/home/jupyter-yyk/FlexGen/opt-1.3b", padding_side="left")
+        tokenizer = AutoTokenizer.from_pretrained(args.model, padding_side="left")
     num_prompts = args.num_gpu_batches * args.gpu_batch_size
     prompt_len, gen_len, cut_gen_len = args.prompt_len, args.gen_len, args.cut_gen_len
 

@@ -217,6 +217,7 @@ def disable_hf_opt_init():
 
 
 def download_opt_weights(model_name, path, local = False, local_path = None):
+    
     from huggingface_hub import snapshot_download
     import torch
 
@@ -226,6 +227,7 @@ def download_opt_weights(model_name, path, local = False, local_path = None):
             f"If it seems to get stuck, you can monitor the progress by "
             f"checking the memory usage of this process.")
 
+    
     if "opt" in model_name:
         hf_model_name = "facebook/" + model_name
     elif "galactica" in model_name:
@@ -238,7 +240,7 @@ def download_opt_weights(model_name, path, local = False, local_path = None):
     
     # run with local path
     folder = local_path
-
+    
     bin_files = glob.glob(os.path.join(folder, "*.bin"))
 
     if "/" in model_name:
