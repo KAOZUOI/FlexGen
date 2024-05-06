@@ -233,13 +233,10 @@ def download_opt_weights(model_name, path, local = False, local_path = None):
     elif "galactica" in model_name:
         hf_model_name = "facebook/" + model_name
 
-        folder = snapshot_download(hf_model_name, allow_patterns="*.bin")
-    else:
-        print(f"Load the pre-trained pytorch weights of {model_name} from local path: "
-            f"{local_path}. The loading can take dozens of minutes.")
+    folder = snapshot_download(hf_model_name, allow_patterns="*.bin")
     
     # run with local path
-    folder = local_path
+    # folder = local_path
     
     bin_files = glob.glob(os.path.join(folder, "*.bin"))
 

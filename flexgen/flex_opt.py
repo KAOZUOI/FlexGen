@@ -1179,8 +1179,67 @@ def get_test_inputs(prompt_len, num_prompts, tokenizer):
                           max_length=prompt_len).input_ids
     return (input_ids[0],) * num_prompts
 
+def get_model_requirements(model_size):
+    weight_size = model_size * 0.4
+    activation_size = model_size * 0.3
+    cache_size = model_size * 0.3
+
+    
+    return weight_size, activation_size, cache_size
+
+
+def calculate_percentages(model_size, total_mem, free_mem):
+    weight_size, activation_size, cache_size = get_model_requirements(model_size)
+
+    weight_percent_gpu = 100
+    weight_percent_cpu = 0
+    cache_percent_gpu = 100
+    cache_percent_cpu = 0
+    activation_percent_gpu = 100
+    activation_percent_cpu = 0
+
+    total_required_mem = weight_size + activation_size + cache_size
+    mem_excess = total_required_mem - free_mem
+    print("total",total_required_mem)
+    print("free",free_mem)
+    print("weight size", weight_size)
+    print("cache size", cache_size)
+    if mem_excess > 0:
+        weight_percent_gpu = int((free_mem / total_required_mem) * 100)
+        if weight_percent_gpu > 100:
+            weight_percent_gpu = 100
+            weight_percent_cpu = 0
+        else:
+            weight_percent_cpu = 100 - weight_percent_gpu
+            remaining_excess = total_required_mem - weight_size * weight_percent_gpu
+            remaining_free_mem = free_mem - free_mem*weight_percent_gpu
+            if remaining_free_mem > 0:
+                cache_percent_gpu = int((remaining_free_mem / cache_size) * 100)
+                if cache_percent_gpu > 100:
+                    cache_percent_gpu = 100
+                    cache_percent_cpu = 0
+                else:
+                    cache_percent_cpu = 100 - cache_percent_gpu
+            
+
+    return [int(weight_percent_gpu), int(weight_percent_cpu), 
+            int(cache_percent_gpu), int(cache_percent_cpu), 
+            int(activation_percent_gpu), int(activation_percent_cpu)]
+
 
 def run_flexgen(args):
+    total_mem = torch.cuda.get_device_properties(4).total_memory
+    # free_mem = max memory of device - current memory
+    free_mem = total_mem - torch.cuda.memory_reserved(4)
+    # free_mem = TorchDevice("cuda:4").mem_stats()[1]
+    
+    if args.autopercent:
+        model_size = get_opt_config(args.model).model_bytes()
+        print(model_size/GB)
+        args.percent = calculate_percentages(model_size, total_mem, free_mem)
+    
+    #print percent
+    print(f"Weight: {args.percent[0]}%, Cache: {args.percent[2]}%, Activation: {args.percent[4]}%")
     print(f"<run_flexgen>: args.model: {args.model}")
     if args.model == "facebook/galactica-30b":
         tokenizer = AutoTokenizer.from_pretrained("facebook/galactica-30b", padding_side="left")
@@ -1322,6 +1381,8 @@ def add_parser_arguments(parser):
 
     parser.add_argument("--local", action="store_true",
         help="Whether to use local copy of the model weights. ")
+    parser.add_argument("--autopercent", type=int, default=0,
+                        help="Auto-adjust the percent parameters based on model size and GPU memory usage (1 for yes, 0 for no)")
 
 
 if __name__ == "__main__":

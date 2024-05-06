@@ -1,0 +1,36 @@
+```bash
+(flexgen) jupyter-yyk@node2:~/FlexGen/test$ python3 -m flexgen.flex_opt --model facebook/opt-30b --autopercent 1
+55.80334681272507
+total 59918387392.0
+free 42298834944
+weight size 23967354956.800003
+cache size 17975516217.6
+Weight: 70%, Cache: 100%, Activation: 100%
+<run_flexgen>: args.model: facebook/opt-30b
+/home/jupyter-yyk/.conda/envs/flexgen/lib/python3.12/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+model size: 55.803 GB, cache size: 2.789 GB, hidden size (prefill): 0.029 GB
+init weight...
+warmup - generate
+benchmark - generate
+/home/jupyter-yyk/.conda/envs/flexgen/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py:347: UserWarning: torch.distributed.reduce_op is deprecated, please use torch.distributed.ReduceOp instead
+  warnings.warn(
+/home/jupyter-yyk/FlexGen/flexgen/utils.py:132: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  data_ptr = tensor.storage().data_ptr()
+Outputs:
+----------------------------------------------------------------------
+0: Paris is the capital city of France and the most populous city in the country. It is the second largest city in the European Union after London. Paris is also the seat of the French government
+----------------------------------------------------------------------
+3: Paris is the capital city of France and the most populous city in the country. It is the second largest city in the European Union after London. Paris is also the seat of the French government
+----------------------------------------------------------------------
+
+TorchDevice: cuda:4
+  cur_mem: 33.5430 GB,  peak_mem: 37.1860 GB
+TorchDevice: cpu
+  cur_mem: 22.9694 GB,  peak_mem: 0.0000 GB
+model size: 55.803 GB   cache size: 2.789 GB    hidden size (p): 0.029 GB
+peak gpu mem: 37.186 GB projected: False
+prefill latency: 2.547 s        prefill throughput: 804.068 token/s
+decode latency: 64.787 s        decode throughput: 1.914 token/s
+total latency: 67.334 s total throughput: 1.901 token/s
+```
