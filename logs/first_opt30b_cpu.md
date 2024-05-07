@@ -38,6 +38,3 @@ prefill latency: 5.519 s        prefill throughput: 371.068 token/s
 decode latency: 153.959 s       decode throughput: 0.805 token/s
 total latency: 159.478 s        total throughput: 0.803 token/s
 ```
-
-
-python3 -m flexgen.flex_opt --model facebook/opt-30b --percent 75 25 100 0 100 0
